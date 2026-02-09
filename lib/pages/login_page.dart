@@ -13,7 +13,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Panggil Service yang baru dibuat tadi
   final StudentService _studentService = StudentService();
 
   bool _isLoading = false;
@@ -30,15 +29,12 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
 
-      // PERUBAHAN DI SINI:
-      // Struktur data sekarang: result['data']['student'] dan result['data']['has_completed']
       final dataResponse = result['data'];
       final student = dataResponse['student'];
       final bool hasCompleted = dataResponse['has_completed'];
 
       if (mounted) {
         if (hasCompleted) {
-          // SKENARIO A: SUDAH MENGERJAKAN -> KE HALAMAN NILAI
           final resultData = dataResponse['result'];
           Navigator.pushReplacement(
             context,
@@ -52,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         } else {
-          // SKENARIO B: BELUM MENGERJAKAN -> KE HALAMAN KUIS
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

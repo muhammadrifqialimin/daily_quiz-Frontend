@@ -9,9 +9,6 @@ class ResultService {
     Map<int, String> answers,
   ) async {
     try {
-      // 🛠️ PERBAIKAN UTAMA DI SINI 🛠️
-      // Kita konversi Key (ID Soal) dari int ke String.
-      // Dari {1: "a"} menjadi {"1": "a"} supaya JSON mau terima.
       final answersConverted = answers.map(
         (key, value) => MapEntry(key.toString(), value),
       );
@@ -21,7 +18,7 @@ class ResultService {
         body: jsonEncode({
           'student_id': studentId,
           'category': category,
-          'answers': answersConverted, // <--- Kirim yang sudah dikonversi
+          'answers': answersConverted,
         }),
         headers: ApiConfig.headers,
       );

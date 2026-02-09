@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../core/api_config.dart'; // Import config tadi
+import '../core/api_config.dart';
 
 class StudentService {
   Future<Map<String, dynamic>> login(String name, String password) async {
