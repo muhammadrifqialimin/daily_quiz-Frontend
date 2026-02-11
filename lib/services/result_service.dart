@@ -8,28 +8,36 @@ class ResultService {
     String category,
     Map<int, String> answers,
   ) async {
-    try {
-      final answersConverted = answers.map(
-        (key, value) => MapEntry(key.toString(), value),
-      );
+    Map<String, String> formattedAnswers = answers.map(
+      (key, value) => MapEntry(key.toString(), value),
+    );
 
+    final url = Uri.parse('${ApiConfig.baseUrl}/submit-quiz');
+
+    try {
       final response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/submit-quiz'),
+        url,
+        headers: ApiConfig.headers,
         body: jsonEncode({
           'student_id': studentId,
           'category': category,
-          'answers': answersConverted,
+          'answers': formattedAnswers,
         }),
-        headers: ApiConfig.headers,
       );
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'score': data['score'],
+          'correct': data['correct'],
+          'total': data['total'],
+        };
       } else {
-        throw Exception('Gagal Submit: ${response.body}');
+        throw Exception(data['message'] ?? 'Gagal mengirim jawaban');
       }
     } catch (e) {
-      throw Exception('Error: $e');
+      throw Exception('Error connection: $e');
     }
   }
 }
