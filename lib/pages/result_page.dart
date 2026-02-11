@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import 'profile_page.dart';
 
 class ResultPage extends StatelessWidget {
+  final int studentId;
   final String studentName;
   final int score;
   final int correct;
@@ -9,6 +11,7 @@ class ResultPage extends StatelessWidget {
 
   const ResultPage({
     super.key,
+    required this.studentId,
     required this.studentName,
     required this.score,
     required this.correct,
@@ -57,105 +60,119 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Panggil fungsi gaya di sini
     final style = _getResultStyle();
 
     return Scaffold(
       backgroundColor: Colors.blue.shade50,
-      body: Center(
-        child: Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            width: 400, // Lebarin dikit biar muat teks panjang
-            padding: const EdgeInsets.all(30),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 1. IKON DINAMIS (Berubah sesuai nilai)
-                Icon(style['icon'], size: 80, color: style['color']),
-
-                const SizedBox(height: 20),
-
-                // 2. JUDUL
-                const Text(
-                  "Hasil Kuis",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 10),
-
-                // 3. PESAN PERSONAL (Dinamis)
-                Text(
-                  style['message'],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-
-                const Divider(height: 40),
-
-                const Text(
-                  "Nilai Akhir",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-
-                // 4. ANGKA NILAI (Warnanya ikut berubah)
-                Text(
-                  "$score",
-                  style: TextStyle(
-                    fontSize: 70,
-                    fontWeight: FontWeight.bold,
-                    color: style['color'], // Warna angka ikut status
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: style['color'].withOpacity(0.1), // Background tipis
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "Benar $correct dari $total soal",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: style['color'],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 20,
+              right: 20,
+              child: FloatingActionButton.small(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.blue.shade800,
+                elevation: 3,
+                tooltip: 'Lihat Profil',
+                child: const Icon(Icons.account_circle_outlined, size: 28),
+                onPressed: () {
+                  // MENGARAHKAN KE HALAMAN PROFILE PAGE (BUKAN POPUP LAGI)
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(studentId: studentId),
                     ),
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 45),
-                    backgroundColor: Colors.red.shade400,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text("KELUAR"),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
+
+            Center(
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Container(
+                  width: 400,
+                  padding: const EdgeInsets.all(30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(style['icon'], size: 80, color: style['color']),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Hasil Kuis",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        style['message'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[700],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const Divider(height: 40),
+                      const Text(
+                        "Nilai Akhir",
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      Text(
+                        "$score",
+                        style: TextStyle(
+                          fontSize: 70,
+                          fontWeight: FontWeight.bold,
+                          color: style['color'],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: style['color'].withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          "Benar $correct dari $total soal",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: style['color'],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 45),
+                          backgroundColor: Colors.red.shade400,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("KELUAR"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
