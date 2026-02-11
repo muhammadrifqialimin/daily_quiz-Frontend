@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/quiz_model.dart';
 import '../services/quiz_service.dart';
 import '../services/result_service.dart';
-import 'login_page.dart';
+import 'result_page.dart';
 
 class QuizPage extends StatefulWidget {
   final int studentId;
@@ -21,7 +21,6 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  // Panggil service yang dibutuhkan
   final QuizService _quizService = QuizService();
   final ResultService _resultService = ResultService();
 
@@ -46,35 +45,16 @@ class _QuizPageState extends State<QuizPage> {
       );
 
       if (mounted) {
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Hasil Kuis 🎉", textAlign: TextAlign.center),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("Hebat ${widget.studentName}!"),
-                Text(
-                  "${result['score']}",
-                  style: const TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
-                Text("Benar ${result['correct']} dari ${result['total']} soal"),
-              ],
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultPage(
+              studentId: widget.studentId,
+              studentName: widget.studentName,
+              score: result['score'],
+              correct: result['correct'],
+              total: result['total'],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                ),
-                child: const Text("Keluar"),
-              ),
-            ],
           ),
         );
       }
@@ -83,7 +63,7 @@ class _QuizPageState extends State<QuizPage> {
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
-      setState(() => _isSubmitting = false);
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -100,11 +80,13 @@ class _QuizPageState extends State<QuizPage> {
           child: FutureBuilder<List<Quiz>>(
             future: _quizList,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
+              }
               if (snapshot.hasError) return Text("Error: ${snapshot.error}");
-              if (!snapshot.hasData || snapshot.data!.isEmpty)
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Text("Tidak ada soal.");
+              }
 
               final quizzes = snapshot.data!;
               final currentQuiz = quizzes[_currentIndex];
