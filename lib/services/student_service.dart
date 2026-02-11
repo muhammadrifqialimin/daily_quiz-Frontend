@@ -54,4 +54,22 @@ class StudentService {
       throw Exception('Error: $e');
     }
   }
+
+  Future<List<dynamic>> getSchedules(int studentId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/schedules?student_id=$studentId'),
+        headers: ApiConfig.headers,
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return json['data'];
+      } else {
+        return [];
+      }
+    } catch (e) {
+      throw Exception('Gagal memuat jadwal: $e');
+    }
+  }
 }

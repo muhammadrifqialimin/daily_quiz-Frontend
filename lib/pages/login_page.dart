@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/student_service.dart';
-import 'quiz_page.dart';
+import 'home_page.dart'; // <--- Arahkan ke Home
 import 'result_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage>
   bool _isLoading = false;
   String _errorMessage = '';
 
+  // Controller untuk animasi background
   late AnimationController _bgAnimationController;
   late Animation<Alignment> _topAlignmentAnimation;
   late Animation<Alignment> _bottomAlignmentAnimation;
@@ -26,6 +27,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+    // Setup Animasi Background Aurora
     _bgAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
@@ -67,34 +69,19 @@ class _LoginPageState extends State<LoginPage>
       if (mounted) {
         final dataResponse = result['data'];
         final student = dataResponse['student'];
-        final bool hasCompleted = dataResponse['has_completed'];
+        // Kita abaikan hasCompleted di sini karena pengecekan dilakukan per jadwal di Home
 
-        if (hasCompleted) {
-          final resultData = dataResponse['result'];
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResultPage(
-                studentId: student['id'],
-                studentName: student['name'],
-                score: resultData['score'],
-                correct: resultData['total_correct'],
-                total: resultData['total_questions'],
-              ),
+        // Langsung masuk ke HOME PAGE
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(
+              studentId: student['id'],
+              studentName: student['name'],
+              className: student['class_name'] ?? 'Umum', // Kirim Nama Kelas
             ),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => QuizPage(
-                studentId: student['id'],
-                studentName: student['name'],
-                category: student['category'],
-              ),
-            ),
-          );
-        }
+          ),
+        );
       }
     } catch (e) {
       setState(() {
@@ -114,6 +101,7 @@ class _LoginPageState extends State<LoginPage>
     return Scaffold(
       body: Stack(
         children: [
+          // 1. BACKGROUND ANIMASI
           AnimatedBuilder(
             animation: _bgAnimationController,
             builder: (context, child) {
@@ -128,6 +116,8 @@ class _LoginPageState extends State<LoginPage>
               );
             },
           ),
+
+          // 2. CARD LOGIN
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
@@ -165,7 +155,7 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
                       const Text(
-                        "Siap untuk tantangan hari ini?",
+                        "Masuk untuk melihat jadwal ujian",
                         style: TextStyle(color: Colors.grey),
                       ),
                       const SizedBox(height: 35),
